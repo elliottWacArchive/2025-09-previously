@@ -1,0 +1,27 @@
+{
+    "name": "web",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev --turbopack",
+        "build": "next build --turbopack",
+        "start": "next start",
+        "lint": "eslint",
+        "dev:api": "cd ../go-api && go run ./cmd/api/main.go",
+        "dev:web": "next dev --turbopack",
+        "dev:full": "concurrently \"npm run dev:api\" \"npm run dev:web\" --names \"🚀API,⚡WEB\" --prefix-colors \"blue,green\""
+    },
+    "dependencies": {
+        "next": "15.5.2",
+        "react": "19.1.0",
+        "react-dom": "19.1.0"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3",
+        "@tailwindcss/postcss": "^4",
+        "concurrently": "^9.2.1",
+        "eslint": "^9",
+        "eslint-config-next": "15.5.2",
+        "tailwindcss": "^4"
+    }
+}
