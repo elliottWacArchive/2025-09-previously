@@ -116,7 +116,11 @@ export default function LatestMovies() {
             try {
                 setLoading(true);
                 const data = await tmdbApi.getLatestReleases();
-                setMovies(data.results?.slice(0, 12) || []);
+                // Trier les films par note décroissante (du mieux noté au moins bien noté)
+                const sortedMovies = (data.results || [])
+                    .sort((a, b) => b.vote_average - a.vote_average)
+                    .slice(0, 12);
+                setMovies(sortedMovies);
             } catch (err) {
                 setError("Erreur lors du chargement des films");
             } finally {
