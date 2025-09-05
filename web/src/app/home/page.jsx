@@ -4,6 +4,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import LatestMovies from "@/components/LatestMovies";
+import TopRatedMovies from "@/components/TopRatedMovies";
 
 export default function HomePage() {
     const { user, logout } = useAuth();
@@ -35,7 +36,10 @@ export default function HomePage() {
                     </Button>
                 </div>
 
-                <LatestMovies />
+                <div className="max-w-7xl mx-auto space-y-12">
+                    <LatestMovies />
+                    <TopRatedMovies />
+                </div>
             </div>
         </ProtectedRoute>
     );
