@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,9 +14,13 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import DotPattern from "@/components/ui/dot-pattern";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
+    const router = useRouter();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
+        username: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -32,7 +37,6 @@ export default function RegisterPage() {
             [name]: value,
         }));
 
-        // Nettoyer l'erreur pour ce champ
         if (errors[name]) {
             setErrors((prev) => ({
                 ...prev,
@@ -43,6 +47,10 @@ export default function RegisterPage() {
 
     const validateForm = () => {
         const newErrors = {};
+
+        if (!formData.username.trim()) {
+            newErrors.username = "Le nom d'utilisateur est requis";
+        }
 
         if (!formData.firstName.trim()) {
             newErrors.firstName = "Le prénom est requis";
@@ -74,12 +82,61 @@ export default function RegisterPage() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const [apiError, setApiError] = useState("");
+    const [success, setSuccess] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        setApiError("");
+        setSuccess(false);
+
         if (validateForm()) {
-            // TODO: Implémenter la logique d'inscription
-            console.log("Données d'inscription:", formData);
+            try {
+                const res = await fetch("http://localhost:8080/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+                if (res.ok) {
+                    try {
+                        const loginRes = await fetch(
+                            "http://localhost:8080/login",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    email: formData.email,
+                                    password: formData.password,
+                                }),
+                            }
+                        );
+
+                        if (loginRes.ok) {
+                            const loginData = await loginRes.json();
+                            login(loginData.token, {
+                                email: formData.email,
+                                username: formData.username,
+                                name: `${formData.firstName} ${formData.lastName}`,
+                            });
+                            router.push("/home");
+                        } else {
+                            setSuccess(true);
+                        }
+                    } catch (loginErr) {
+                        setSuccess(true);
+                    }
+                } else {
+                    const data = await res.json();
+                    setApiError(data.message || "Erreur lors de l'inscription");
+                }
+            } catch (err) {
+                setApiError("Erreur réseau");
+            }
         }
     };
 
@@ -96,6 +153,35 @@ export default function RegisterPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {apiError && (
+                            <p className="text-red-400 text-center text-sm mb-2">
+                                {apiError}
+                            </p>
+                        )}
+                        {success && (
+                            <p className="text-green-400 text-center text-sm mb-2">
+                                Inscription réussie !
+                            </p>
+                        )}
+                        <div className="space-y-2">
+                            <Label htmlFor="username" className="text-white">
+                                Nom d'utilisateur
+                            </Label>
+                            <Input
+                                id="username"
+                                name="username"
+                                type="text"
+                                placeholder="Nom d'utilisateur"
+                                value={formData.username}
+                                onChange={handleInputChange}
+                                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-white"
+                            />
+                            {errors.username && (
+                                <p className="text-red-400 text-xs">
+                                    {errors.username}
+                                </p>
+                            )}
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label
