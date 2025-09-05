@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DotPattern from "@/components/ui/dot-pattern";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -24,7 +25,9 @@ export default function RootLayout({ children }) {
                 className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
             >
                 <DotPattern />
-                <div className="relative z-10">{children}</div>
+                <div className="relative z-10">
+                    <AuthProvider>{children}</AuthProvider>
+                </div>
             </body>
         </html>
     );
