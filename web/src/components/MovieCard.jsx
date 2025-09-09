@@ -2,8 +2,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Star } from "lucide-react";
+import { Star, Bookmark, BookmarkCheck } from "lucide-react";
 import { tmdbApi } from "@/lib/tmdb";
+import { useRouter } from "next/navigation";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 
 const MovieCard = ({
     movie,
@@ -11,6 +13,8 @@ const MovieCard = ({
     onCardClick,
     onOverlayClose,
 }) => {
+    const router = useRouter();
+    const { toggleMovie, isMovieInWatchlist } = useWatchlist();
     if (!movie) {
         return <MovieCardSkeleton />;
     }
@@ -137,10 +141,10 @@ const MovieCard = ({
                             className="w-40 h-14 bg-transparent border-2 border-white/80 text-white rounded-full text-lg font-semibold backdrop-blur-sm select-none cursor-pointer transition-all duration-300 flex items-center justify-center hover:bg-green-500 hover:bg-opacity-90 hover:border-green-500"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log("Card clicked");
+                                router.push(`/movie/${movie.id}`);
                             }}
                         >
-                            Card
+                            Voir détails
                         </div>
                         <div
                             className="w-40 h-14 bg-transparent border-2 border-white/80 text-white rounded-full text-lg font-semibold backdrop-blur-sm select-none cursor-pointer transition-all duration-300 flex items-center justify-center hover:bg-green-500 hover:bg-opacity-90 hover:border-green-500"
@@ -152,13 +156,27 @@ const MovieCard = ({
                             Watch
                         </div>
                         <div
-                            className="w-40 h-14 bg-transparent border-2 border-white/80 text-white rounded-full text-lg font-semibold backdrop-blur-sm select-none cursor-pointer transition-all duration-300 flex items-center justify-center hover:bg-green-500 hover:bg-opacity-90 hover:border-green-500"
+                            className={`w-40 h-14 bg-transparent border-2 text-white rounded-full text-lg font-semibold backdrop-blur-sm select-none cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 ${
+                                isMovieInWatchlist(movie.id)
+                                    ? "border-green-500 text-green-400 hover:bg-green-500/20"
+                                    : "border-white/80 hover:bg-blue-500 hover:bg-opacity-90 hover:border-blue-500"
+                            }`}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log("Watchlist clicked");
+                                toggleMovie(movie);
                             }}
                         >
-                            Watchlist
+                            {isMovieInWatchlist(movie.id) ? (
+                                <>
+                                    <BookmarkCheck className="h-4 w-4" />
+                                    Ajouté
+                                </>
+                            ) : (
+                                <>
+                                    <Bookmark className="h-4 w-4" />
+                                    Watchlist
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
