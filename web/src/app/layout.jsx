@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DotPattern from "@/components/ui/dot-pattern";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { WatchlistProvider } from "@/contexts/WatchlistContext";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -26,7 +27,9 @@ export default function RootLayout({ children }) {
             >
                 <DotPattern />
                 <div className="relative z-10">
-                    <AuthProvider>{children}</AuthProvider>
+                    <AuthProvider>
+                        <WatchlistProvider>{children}</WatchlistProvider>
+                    </AuthProvider>
                 </div>
             </body>
         </html>
