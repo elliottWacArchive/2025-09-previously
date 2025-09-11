@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import Searchbar from "@/components/Searchbar";
 
 export default function Header() {
     const { user, logout } = useAuth();
@@ -59,6 +60,7 @@ export default function Header() {
                         <span className="text-sm text-gray-400 hidden sm:inline">
                             Salut, {displayName}
                         </span>
+                        <Searchbar />
                         <Button
                             onClick={logout}
                             variant="outline"
