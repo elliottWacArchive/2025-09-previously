@@ -10,21 +10,14 @@ export default function TopRatedMovies() {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [openOverlayId, setOpenOverlayId] = useState(null);
     const scrollContainerRef = useRef(null);
-
-    const handleCardClick = (movieId) => {
-        setOpenOverlayId(movieId);
-    };
-
-    const handleOverlayClose = () => {
-        setOpenOverlayId(null);
-    };
 
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
+            const isMobile = window.innerWidth < 768;
+            const scrollDistance = isMobile ? 162 : 224;
             scrollContainerRef.current.scrollBy({
-                left: -200,
+                left: -scrollDistance,
                 behavior: "smooth",
             });
         }
@@ -32,8 +25,10 @@ export default function TopRatedMovies() {
 
     const scrollRight = () => {
         if (scrollContainerRef.current) {
+            const isMobile = window.innerWidth < 768;
+            const scrollDistance = isMobile ? 162 : 224;
             scrollContainerRef.current.scrollBy({
-                left: 200,
+                left: scrollDistance,
                 behavior: "smooth",
             });
         }
@@ -86,34 +81,34 @@ export default function TopRatedMovies() {
     }
 
     return (
-        <section className="relative">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">
+        <section className="relative px-2 md:px-4">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-white">
                     Films les mieux notés
                 </h2>
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                     <Button
                         variant="outline"
                         size="icon"
                         onClick={scrollLeft}
-                        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-8 w-8 md:h-10 md:w-10"
                     >
-                        <ChevronLeft className="h-4 w-4" />
+                        <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
                     </Button>
                     <Button
                         variant="outline"
                         size="icon"
                         onClick={scrollRight}
-                        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-8 w-8 md:h-10 md:w-10"
                     >
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
                     </Button>
                 </div>
             </div>
 
             <div
                 ref={scrollContainerRef}
-                className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
+                className="flex gap-3 md:gap-6 overflow-x-auto pb-4 scrollbar-hide h-[350px] md:h-[450px]"
                 style={{
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
@@ -121,18 +116,13 @@ export default function TopRatedMovies() {
             >
                 {loading
                     ? Array.from({ length: 12 }, (_, i) => (
-                          <div key={i} className="flex-none w-72 h-72">
+                          <div key={i} className="flex-none">
                               <MovieCardSkeleton />
                           </div>
                       ))
                     : movies.map((movie) => (
-                          <div key={movie.id} className="flex-none w-72 h-72">
-                              <MovieCard
-                                  movie={movie}
-                                  isOverlayOpen={openOverlayId === movie.id}
-                                  onCardClick={handleCardClick}
-                                  onOverlayClose={handleOverlayClose}
-                              />
+                          <div key={movie.id} className="flex-none">
+                              <MovieCard movie={movie} />
                           </div>
                       ))}
             </div>

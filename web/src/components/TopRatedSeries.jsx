@@ -10,21 +10,14 @@ export default function TopRatedSeries() {
     const [series, setSeries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [openOverlayId, setOpenOverlayId] = useState(null);
     const scrollContainerRef = useRef(null);
-
-    const handleCardClick = (serieId) => {
-        setOpenOverlayId(serieId);
-    };
-
-    const handleOverlayClose = () => {
-        setOpenOverlayId(null);
-    };
 
     const scrollLeft = () => {
         if (scrollContainerRef.current) {
+            const isMobile = window.innerWidth < 768;
+            const scrollDistance = isMobile ? 162 : 224;
             scrollContainerRef.current.scrollBy({
-                left: -200,
+                left: -scrollDistance,
                 behavior: "smooth",
             });
         }
@@ -32,8 +25,10 @@ export default function TopRatedSeries() {
 
     const scrollRight = () => {
         if (scrollContainerRef.current) {
+            const isMobile = window.innerWidth < 768;
+            const scrollDistance = isMobile ? 162 : 224;
             scrollContainerRef.current.scrollBy({
-                left: 200,
+                left: scrollDistance,
                 behavior: "smooth",
             });
         }
@@ -129,22 +124,23 @@ export default function TopRatedSeries() {
             </div>
             <div
                 ref={scrollContainerRef}
-                className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
+                className="flex gap-3 md:gap-6 overflow-x-auto pb-4 scrollbar-hide h-[350px] md:h-[450px]"
                 style={{
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                 }}
             >
-                {series.map((serie) => (
-                    <div key={serie.id} className="flex-none w-72 h-72">
-                        <SerieCard
-                            serie={serie}
-                            isOverlayOpen={openOverlayId === serie.id}
-                            onCardClick={handleCardClick}
-                            onOverlayClose={handleOverlayClose}
-                        />
-                    </div>
-                ))}
+                {loading
+                    ? Array.from({ length: 12 }, (_, i) => (
+                          <div key={i} className="flex-none">
+                              <SerieCardSkeleton />
+                          </div>
+                      ))
+                    : series.map((serie) => (
+                          <div key={serie.id} className="flex-none">
+                              <SerieCard serie={serie} />
+                          </div>
+                      ))}
             </div>
         </section>
     );

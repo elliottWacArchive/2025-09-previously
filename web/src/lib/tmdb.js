@@ -12,6 +12,86 @@ export const TMDB_CONFIG = {
 };
 
 export const tmdbApi = {
+    enrichMovieWithImages: async (movieId) => {
+        try {
+            const [detailsResponse, imagesResponse] = await Promise.all([
+                fetch(
+                    `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&language=fr-FR`
+                ),
+                fetch(
+                    `${TMDB_CONFIG.BASE_URL}/movie/${movieId}/images?api_key=${TMDB_CONFIG.API_KEY}`
+                ),
+            ]);
+
+            if (!detailsResponse.ok || !imagesResponse.ok) {
+                throw new Error("Failed to fetch movie details");
+            }
+
+            const [details, images] = await Promise.all([
+                detailsResponse.json(),
+                imagesResponse.json(),
+            ]);
+
+            const logo = images.logos?.find(
+                (logo) =>
+                    logo.iso_639_1 === "fr" ||
+                    logo.iso_639_1 === "en" ||
+                    logo.iso_639_1 === null
+            );
+
+            return {
+                backdrop_path: details.backdrop_path,
+                logo_path: logo?.file_path || null,
+            };
+        } catch (error) {
+            console.error("Error enriching movie with images:", error);
+            return {
+                backdrop_path: null,
+                logo_path: null,
+            };
+        }
+    },
+
+    enrichSerieWithImages: async (serieId) => {
+        try {
+            const [detailsResponse, imagesResponse] = await Promise.all([
+                fetch(
+                    `${TMDB_CONFIG.BASE_URL}/tv/${serieId}?api_key=${TMDB_CONFIG.API_KEY}&language=fr-FR`
+                ),
+                fetch(
+                    `${TMDB_CONFIG.BASE_URL}/tv/${serieId}/images?api_key=${TMDB_CONFIG.API_KEY}`
+                ),
+            ]);
+
+            if (!detailsResponse.ok || !imagesResponse.ok) {
+                throw new Error("Failed to fetch serie details");
+            }
+
+            const [details, images] = await Promise.all([
+                detailsResponse.json(),
+                imagesResponse.json(),
+            ]);
+
+            const logo = images.logos?.find(
+                (logo) =>
+                    logo.iso_639_1 === "fr" ||
+                    logo.iso_639_1 === "en" ||
+                    logo.iso_639_1 === null
+            );
+
+            return {
+                backdrop_path: details.backdrop_path,
+                logo_path: logo?.file_path || null,
+            };
+        } catch (error) {
+            console.error("Error enriching serie with images:", error);
+            return {
+                backdrop_path: null,
+                logo_path: null,
+            };
+        }
+    },
+
     getLatestReleases: async () => {
         try {
             const response = await fetch(
