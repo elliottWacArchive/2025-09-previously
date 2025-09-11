@@ -7,6 +7,7 @@ import (
 	"example.com/api/internal/auth"
 	"example.com/api/internal/database"
 	"example.com/api/internal/movies"
+	"example.com/api/internal/watchlist"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -46,6 +47,8 @@ func NewRouter(db *database.MongoDB) http.Handler {
 		api.Mount("/movies", movies.Routes(db))
 
 		api.Mount("/history", movies.HistoryRoutes(db))
+
+		api.Mount("/watchlist", watchlist.Routes(db, authHandlers))
 	})
 	return r
 }

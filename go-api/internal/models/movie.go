@@ -70,3 +70,30 @@ type CreateWatchHistoryRequest struct {
 	Location    string    `json:"location"`
 	Context     string    `json:"context"`
 }
+
+type WatchlistItem struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	UserID      primitive.ObjectID `bson:"user_id" json:"user_id"`
+	ItemID      string             `bson:"item_id" json:"item_id"`
+	ItemType    string             `bson:"item_type" json:"item_type"`
+	Title       string             `bson:"title" json:"title"`
+	Poster      string             `bson:"poster" json:"poster"`
+	ReleaseDate string             `bson:"release_date" json:"release_date"`
+	Overview    string             `bson:"overview" json:"overview"`
+	VoteAverage float64            `bson:"vote_average" json:"vote_average"`
+	Genres      []string           `bson:"genres" json:"genres"`
+	ItemData    interface{}        `bson:"item_data" json:"item_data"`
+	CreatedAt   time.Time          `bson:"created_at" json:"created_at"`
+}
+
+type AddToWatchlistRequest struct {
+	ItemID      string      `json:"item_id" validate:"required"`
+	ItemType    string      `json:"item_type" validate:"required"`
+	Title       string      `json:"title" validate:"required"`
+	Poster      string      `json:"poster"`
+	ReleaseDate string      `json:"release_date"`
+	Overview    string      `json:"overview"`
+	VoteAverage float64     `json:"vote_average"`
+	Genres      []string    `json:"genres"`
+	ItemData    interface{} `json:"item_data"`
+}
