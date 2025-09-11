@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import Searchbar from "@/components/Searchbar";
+import ProfileButton from "@/components/ProfileButton";
 
 export default function Header() {
     const { user, logout } = useAuth();
@@ -25,7 +26,6 @@ export default function Header() {
             label: "Watchlist",
             current: pathname === "/watchlist",
         },
-        { href: "/profil", label: "Profil", current: pathname === "/profil" },
     ];
 
     return (
@@ -61,14 +61,7 @@ export default function Header() {
                             Salut, {displayName}
                         </span>
                         <Searchbar />
-                        <Button
-                            onClick={logout}
-                            variant="outline"
-                            size="sm"
-                            className="bg-transparent border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-colors duration-200"
-                        >
-                            Déconnexion
-                        </Button>
+                        <ProfileButton />
                     </div>
 
                     <div className="md:hidden">
